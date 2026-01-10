@@ -28,6 +28,7 @@ builder.Services.AddSingleton<RetryFileOperationService>();
 
 builder.Services.Configure<OpenRouterModelsApi>(builder.Configuration.GetSection("OpenRouterModelsApi"));
 builder.Services.Configure<OllamaModelsApi>(builder.Configuration.GetSection("OllamaModelsApi"));
+builder.Services.Configure<GroqModelsApi>(builder.Configuration.GetSection("GroqModelsApi"));
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<ChatHistoryOptions>(builder.Configuration.GetSection("ChatHistoryOptions"));
 
@@ -51,6 +52,7 @@ builder.Services.AddScoped<RagChatService>();
 builder.Services.AddSingleton<MailService>();
 builder.Services.AddHttpClient<OllamaChatService>();
 builder.Services.AddHttpClient<OpenRouterChatService>();
+builder.Services.AddHttpClient<GroqChatService>();
 builder.Services.AddScoped<AgentService>();
 builder.Services.AddScoped<ToolsRegistryService>();
 
@@ -86,7 +88,10 @@ if (app.Environment.IsDevelopment())
     // OpenAPI removed for .NET 8 compatibility
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowLocalAngular");
 
@@ -105,4 +110,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Enviro
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "AIChatBot API v1");
     });
 }
+
+app.MapGet("/", () => Results.Redirect("/swagger"));
+
 app.Run();

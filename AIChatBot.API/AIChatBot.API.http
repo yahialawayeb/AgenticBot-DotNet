@@ -1,4 +1,4 @@
-@AIChatBot.API_HostAddress = https://localhost:7154
+@AIChatBot.API_HostAddress = http://localhost:5103
 
 
 GET {{AIChatBot.API_HostAddress}}/api/tools/schema

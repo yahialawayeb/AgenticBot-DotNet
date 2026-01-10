@@ -25,6 +25,7 @@ namespace AIChatBot.API.Factory
                 "google/gemini-2.0-flash-exp:free" => _provider.GetRequiredService<OpenRouterChatService>(),
                 "openai/gpt-3.5-turbo-0613" => _provider.GetRequiredService<OpenRouterChatService>(),
                 "google/gemini-2.0-flash-001" => _provider.GetRequiredService<OpenRouterChatService>(),
+                "llama-3.1-8b-instant" => _provider.GetRequiredService<GroqChatService>(),
                 _ => throw new NotSupportedException($"Model '{modelName}' is not supported.")
             };
         }

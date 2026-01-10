@@ -69,7 +69,8 @@ namespace AIChatBot.API.Data
                 new AIModel { Id = 6, ModelName = "google/gemma-3-27b-it:free", Name = "Gemma 3 27B", Company = "Google", LogoUrl = "assets/images/model-icons/gemma.png", Description = "Gemma 3 introduces multimodality, supporting vision-language input and text outputs. It handles context windows up to 128k tokens, understands over 140 languages, and offers improved math, reasoning, and chat capabilities, including structured outputs and function calling. Gemma 3 27B is Google's latest open source model, successor to Gemma 2.", ReferralSource = "OpenRouter", ReferenceLink = "https://openrouter.ai/google/gemma-3-27b-it:free" },
                 new AIModel { Id = 7, ModelName = "google/gemini-2.0-flash-exp:free", Name = "Gemini Flash 2.0 - Limited", Company = "Google", LogoUrl = "assets/images/model-icons/gemini.png", Description = "Gemini Flash 2.0 offers a significantly faster time to first token (TTFT) compared to Gemini Flash 1.5, while maintaining quality on par with larger models like Gemini Pro 1.5. It introduces notable enhancements in multimodal understanding, coding capabilities, complex instruction following, and function calling. These advancements come together to deliver more seamless and robust agentic experiences.", ReferralSource = "OpenRouter", ReferenceLink = "https://openrouter.ai/google/gemini-2.0-flash-exp:free" },
                 new AIModel { Id = 8, ModelName = "openai/gpt-3.5-turbo-0613", Name = "GPT-3.5 Turbo", Company = "OpenAI", LogoUrl = "assets/images/model-icons/chatgpt.png", Description = "GPT-3.5 Turbo is OpenAI's fastest model. It can understand and generate natural language or code, and is optimized for chat and traditional completion tasks.", ReferralSource = "OpenRouter", ReferenceLink = "https://openrouter.ai/openai/gpt-3.5-turbo-0613" },
-                new AIModel { Id = 9, ModelName = "google/gemini-2.0-flash-001", Name = "Gemini Flash 2.0 - Unlimited", Company = "Google", LogoUrl = "assets/images/model-icons/gemini.png", Description = "Gemini Flash 2.0 offers a significantly faster time to first token (TTFT) compared to Gemini Flash 1.5, while maintaining quality on par with larger models like Gemini Pro 1.5. It introduces notable enhancements in multimodal understanding, coding capabilities, complex instruction following, and function calling. These advancements come together to deliver more seamless and robust agentic experiences.", ReferralSource = "OpenRouter", ReferenceLink = "https://openrouter.ai/google/gemini-2.0-flash-001" }
+                new AIModel { Id = 9, ModelName = "google/gemini-2.0-flash-001", Name = "Gemini Flash 2.0 - Unlimited", Company = "Google", LogoUrl = "assets/images/model-icons/gemini.png", Description = "Gemini Flash 2.0 offers a significantly faster time to first token (TTFT) compared to Gemini Flash 1.5, while maintaining quality on par with larger models like Gemini Pro 1.5. It introduces notable enhancements in multimodal understanding, coding capabilities, complex instruction following, and function calling. These advancements come together to deliver more seamless and robust agentic experiences.", ReferralSource = "OpenRouter", ReferenceLink = "https://openrouter.ai/google/gemini-2.0-flash-001" },
+                new AIModel { Id = 10, ModelName = "llama-3.1-8b-instant", Name = "LLaMA 3.1 8B (Groq)", Company = "Meta", LogoUrl = "assets/images/model-icons/llama.png", Description = "Llama 3.1 8B is a high-performance, lightweight model optimized for low latency and high throughput, hosted on Groq.", ReferralSource = "Groq", ReferenceLink = "https://console.groq.com/docs/models" }
             );
 
             // Seed AIModelChatModes (model-mode relationships)
@@ -104,7 +105,10 @@ namespace AIChatBot.API.Data
                 new AIModelChatMode { AIModelId = 9, ChatModeId = 1 },
                 new AIModelChatMode { AIModelId = 9, ChatModeId = 2 },
                 new AIModelChatMode { AIModelId = 9, ChatModeId = 3 },
-                new AIModelChatMode { AIModelId = 9, ChatModeId = 4 }
+                new AIModelChatMode { AIModelId = 9, ChatModeId = 4 },
+                // LLaMA 3.1 8B (Groq)
+                new AIModelChatMode { AIModelId = 10, ChatModeId = 1 },
+                new AIModelChatMode { AIModelId = 10, ChatModeId = 2 }
             );
         }
     }

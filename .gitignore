@@ -368,3 +368,5 @@ AIChatBot.UI/.vscode/launch.json
 AIChatBot.UI/.vscode/tasks.json
 /AIChatBot.UI/dist/ai-chatbot
 /AIChatBot.UI/dist/test-out
+AIChatBot.UI/.angular
+AIChatBot.UI/pnpm-lock.yaml
