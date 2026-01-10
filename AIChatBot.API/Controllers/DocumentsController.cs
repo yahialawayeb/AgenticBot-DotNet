@@ -103,8 +103,15 @@ namespace AIChatBot.API.Controllers
                     }
                 
                 case ".pdf":
-                    // For now, return a placeholder. In production, you'd use a PDF library
-                    return "PDF content extraction would require additional dependencies like iTextSharp or PdfPig.";
+                    using (var document = UglyToad.PdfPig.PdfDocument.Open(stream))
+                    {
+                        var textBuilder = new StringBuilder();
+                        foreach (var page in document.GetPages())
+                        {
+                            textBuilder.Append(page.Text);
+                        }
+                        return textBuilder.ToString();
+                    }
                 
                 default:
                     throw new NotSupportedException($"File type {extension} is not supported");
