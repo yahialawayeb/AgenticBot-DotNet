@@ -54,6 +54,17 @@ namespace AIChatBot.API.Services
             return await _chatSessionDataContext.RenameChatSessionAsync(request);
         }
 
+        public async Task<bool> DeleteSessionAsync(Guid userId, Guid sessionIdentity)
+        {
+            var result = await _chatSessionDataContext.DeleteSessionAsync(userId, sessionIdentity);
+            if (result)
+            {
+                cacheKey = $"ChatSession_{userId}";
+                _cache.Remove(cacheKey);
+            }
+            return result;
+        }
+
         public async Task<ChatSession> CreateSessionAsync(ChatSessionRequest request)
         {
             if (request.UserId == null || string.IsNullOrWhiteSpace(request.Name))

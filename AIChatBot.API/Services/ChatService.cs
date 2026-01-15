@@ -48,6 +48,11 @@ namespace AIChatBot.API.Services
         {
             var sessionWithoutMessages = await _chatSessionServices.GetSessionWithoutMessages(request.UserId, request.ChatSessionIdentity);
             var selectedModel = _modelService.GetModelById(request.ModelId);
+            if (selectedModel == null)
+            {
+                return new BadRequestObjectResult(new { error = "Target AI model activation failed. The requested model core is not registered in the system database." });
+            }
+
             // Validate request
             var messages = new List<ChatMessage>
             {
@@ -65,114 +70,122 @@ namespace AIChatBot.API.Services
             string responseText = string.Empty;
             bool saveHistory = true;
 
-            if (request.AIMode == "tools")
+            try
             {
-                var prompt = preparePrompt(request.Message);
-                var service = _factory.GetService(selectedModel.ModelName);
-                var aiResponse = await service.SendMessageAsync(selectedModel.ModelName, prompt, request.ConnectionId);
-                responseText = await _agentService.RunToolAsync(aiResponse, request.UserId, sessionWithoutMessages.Id, request.ConnectionId);
-            }
-            else if (request.AIMode == "agent")
-            {
-                var service = _factory.GetService(selectedModel.ModelName);
-
-                var msgObject = new List<Dictionary<string, string>>
+                if (request.AIMode == "tools")
                 {
-                    new() { ["role"] = "user", ["content"] = request.Message }
-                };
-                var response = await service.ChatWithFunctionSupportAsync(selectedModel.ModelName, msgObject, request.ConnectionId);
-                responseText = await _agentService.RunAgentAsync(response, request.UserId, sessionWithoutMessages.Id, request.ConnectionId);
-            }
-            else if (request.AIMode == "planner")
-            {
-                var service = _factory.GetService(selectedModel.ModelName);
-                var funcExecLog = new List<FunctionCallResult>();
-                var isDone = false;
-                var step = 0;
-                const int MaxIterations = 10; // Maximum allowed iterations to prevent infinite loops
-                do
+                    var prompt = preparePrompt(request.Message);
+                    var service = _factory.GetService(selectedModel.ModelName);
+                    var aiResponse = await service.SendMessageAsync(selectedModel.ModelName, prompt, request.ConnectionId);
+                    responseText = await _agentService.RunToolAsync(aiResponse, request.UserId, sessionWithoutMessages.Id, request.ConnectionId);
+                }
+                else if (request.AIMode == "agent")
                 {
-                    if (step >= MaxIterations)
-                    {
-                        Console.WriteLine("⚠️ Maximum iteration limit reached in planner mode.");
-                        break;
-                    }
-                    var msgObject = preparePlannerPrompt(request, step, funcExecLog);
+                    var service = _factory.GetService(selectedModel.ModelName);
 
-                    //Serialize the message object for logging
-                    var msgJson = JsonSerializer.Serialize(msgObject, new JsonSerializerOptions
+                    var msgObject = new List<Dictionary<string, string>>
                     {
-                        WriteIndented = true,
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                    });
-
-                    var response = await service.ChatWithFunctionSupportAsync(selectedModel.ModelName, msgObject, request.ConnectionId);
-
-                    var responseJson = JsonSerializer.Serialize(response, new JsonSerializerOptions
-                    {
-                        WriteIndented = true,
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                    });
-                    Console.WriteLine(responseJson);
-                    if (!response.Any(a => !string.IsNullOrWhiteSpace(a.FunctionName)))
-                    {
-                        isDone = true;
-                        break;
-                    }
-                    var iterationResponse = await _agentService.RunAgentAsync(response, request.UserId, sessionWithoutMessages.Id, request.ConnectionId);
-                    foreach (var funcCall in response.Where(a => !string.IsNullOrWhiteSpace(a.FunctionName)))
-                    {
-                        funcExecLog.Add(new FunctionCallResult()
-                        {
-                            FunctionName = funcCall.FunctionName,
-                            ArgumentsJson = funcCall.ArgumentsJson,
-                            TextResponse = iterationResponse
-                        });
-                    }
-                    messages = new List<ChatMessage>
-                    {
-                        new ChatMessage
-                        {
-                            Role = "assistant",
-                            ChatSessionId = sessionWithoutMessages.Id,
-                            Content = iterationResponse,
-                            TimeStamp = DateTime.UtcNow
-                        }
+                        new() { ["role"] = "user", ["content"] = request.Message }
                     };
-
-                    foreach (var msg in messages.Where(m => m.Role == "assistant"))
-                    {
-                        // Send the message to the client via SignalR
-                        if (!string.IsNullOrEmpty(request.ConnectionId))
-                        {
-                            await _hubContext.Clients.Client(request.ConnectionId).SendAsync("ReceiveMessage", msg);
-                        }
-                    }
-
-                    _chatHistoryService.SaveHistory(request.UserId, messages);
-
-                    responseText += $"Recursion Step: {step} \n" + iterationResponse;
-                    step++;
-                } while (!isDone);
-                saveHistory = false; // Don't save history for planner mode
-                if (string.IsNullOrWhiteSpace(responseText))
+                    var response = await service.ChatWithFunctionSupportAsync(selectedModel.ModelName, msgObject, request.ConnectionId);
+                    responseText = await _agentService.RunAgentAsync(response, request.UserId, sessionWithoutMessages.Id, request.ConnectionId);
+                }
+                else if (request.AIMode == "planner")
                 {
-                    responseText = "⚠️ Agent loop ended without clear conclusion.";
+                    var service = _factory.GetService(selectedModel.ModelName);
+                    var funcExecLog = new List<FunctionCallResult>();
+                    var isDone = false;
+                    var step = 0;
+                    const int MaxIterations = 10; // Maximum allowed iterations to prevent infinite loops
+                    do
+                    {
+                        if (step >= MaxIterations)
+                        {
+                            Console.WriteLine("⚠️ Maximum iteration limit reached in planner mode.");
+                            break;
+                        }
+                        var msgObject = preparePlannerPrompt(request, step, funcExecLog);
+
+                        //Serialize the message object for logging
+                        var msgJson = JsonSerializer.Serialize(msgObject, new JsonSerializerOptions
+                        {
+                            WriteIndented = true,
+                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                        });
+
+                        var response = await service.ChatWithFunctionSupportAsync(selectedModel.ModelName, msgObject, request.ConnectionId);
+
+                        var responseJson = JsonSerializer.Serialize(response, new JsonSerializerOptions
+                        {
+                            WriteIndented = true,
+                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                        });
+                        Console.WriteLine(responseJson);
+                        if (!response.Any(a => !string.IsNullOrWhiteSpace(a.FunctionName)))
+                        {
+                            isDone = true;
+                            break;
+                        }
+                        var iterationResponse = await _agentService.RunAgentAsync(response, request.UserId, sessionWithoutMessages.Id, request.ConnectionId);
+                        foreach (var funcCall in response.Where(a => !string.IsNullOrWhiteSpace(a.FunctionName)))
+                        {
+                            funcExecLog.Add(new FunctionCallResult()
+                            {
+                                FunctionName = funcCall.FunctionName,
+                                ArgumentsJson = funcCall.ArgumentsJson,
+                                TextResponse = iterationResponse
+                            });
+                        }
+                        messages = new List<ChatMessage>
+                        {
+                            new ChatMessage
+                            {
+                                Role = "assistant",
+                                ChatSessionId = sessionWithoutMessages.Id,
+                                Content = iterationResponse,
+                                TimeStamp = DateTime.UtcNow
+                            }
+                        };
+
+                        foreach (var msg in messages.Where(m => m.Role == "assistant"))
+                        {
+                            // Send the message to the client via SignalR
+                            if (!string.IsNullOrEmpty(request.ConnectionId))
+                            {
+                                await _hubContext.Clients.Client(request.ConnectionId).SendAsync("ReceiveMessage", msg);
+                            }
+                        }
+
+                        _chatHistoryService.SaveHistory(request.UserId, messages);
+
+                        responseText += $"Recursion Step: {step} \n" + iterationResponse;
+                        step++;
+                    } while (!isDone);
+                    saveHistory = false; // Don't save history for planner mode
+                    if (string.IsNullOrWhiteSpace(responseText))
+                    {
+                        responseText = "⚠️ Agent loop ended without clear conclusion.";
+                    }
+                }
+                else if (request.AIMode == "rag")
+                {
+                    responseText = await _ragChatService.GenerateRagResponseAsync(
+                        request.UserId.ToString(),
+                        request.Message,
+                        selectedModel.ModelName,
+                        request.ChatSessionIdentity,
+                        request.ConnectionId);
+                }
+                else
+                {
+                    var service = _factory.GetService(selectedModel.ModelName);
+                    responseText = await service.SendMessageAsync(selectedModel.ModelName, request.Message, request.ConnectionId);
                 }
             }
-            else if (request.AIMode == "rag")
+            catch (Exception ex)
             {
-                responseText = await _ragChatService.GenerateRagResponseAsync(
-                    request.UserId.ToString(),
-                    request.Message,
-                    selectedModel.ModelName,
-                    request.ChatSessionIdentity,
-                    request.ConnectionId);
-            }
-            else
-            {
-                var service = _factory.GetService(selectedModel.ModelName);
-                responseText = await service.SendMessageAsync(selectedModel.ModelName, request.Message, request.ConnectionId);
+                responseText = $"⚠️ System Fault: A critical error occurred during message processing. Mode: {request.AIMode}, Model: {selectedModel?.ModelName}. Error details: {ex.Message}";
+                saveHistory = true; // Still save the error in history so the user knows why it failed
             }
 
             if (saveHistory)
@@ -208,9 +221,18 @@ namespace AIChatBot.API.Services
 
         private List<Dictionary<string, string>> preparePlannerPrompt(ChatRequest request, int step, List<FunctionCallResult> functionCalls)
         {
+            const int MaxMessagesToInclude = 15; // Limit to prevent token overflow
+            
             var chatSession = _chatHistoryService.GetHistory(request.UserId, request.ChatSessionIdentity);
 
-            var msgObject = chatSession.Messages.Select(m => new Dictionary<string, string>
+            // Take only the most recent messages to stay within token limits
+            var recentMessages = chatSession.Messages
+                .OrderByDescending(m => m.TimeStamp)
+                .Take(MaxMessagesToInclude)
+                .OrderBy(m => m.TimeStamp)
+                .ToList();
+
+            var msgObject = recentMessages.Select(m => new Dictionary<string, string>
             {
                 ["role"] = m.Role.ToLower(),  // "user" or "assistant"
                 ["content"] = m.Content

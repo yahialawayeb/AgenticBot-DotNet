@@ -9,5 +9,6 @@ namespace AIChatBot.API.Interfaces.DataContext
         Task<List<ChatSession>> GetSessionsWithoutMessages(Guid userId);
         Task<bool> RenameChatSessionAsync(ChatSessionRequest request);
         Task<ChatSession> CreateSessionAsync(ChatSessionRequest request);
+        Task<bool> DeleteSessionAsync(Guid userId, Guid sessionIdentity);
     }
 }

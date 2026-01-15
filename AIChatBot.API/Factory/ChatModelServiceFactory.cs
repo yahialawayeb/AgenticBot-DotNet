@@ -16,15 +16,16 @@ namespace AIChatBot.API.Factory
         {
             return modelName.ToLower() switch
             {
-                "phi3" => _provider.GetRequiredService<OllamaChatService>(),
-                "llama3" => _provider.GetRequiredService<OllamaChatService>(),
-                "gemma:2b" => _provider.GetRequiredService<OllamaChatService>(),
-                "mistral" => _provider.GetRequiredService<OllamaChatService>(),
-                "deepseek/deepseek-chat-v3-0324:free" => _provider.GetRequiredService<OpenRouterChatService>(),
+                // "phi3" => _provider.GetRequiredService<OllamaChatService>(),
+                // "llama3" => _provider.GetRequiredService<OllamaChatService>(),
+                // "gemma:2b" => _provider.GetRequiredService<OllamaChatService>(),
+                // "mistral" => _provider.GetRequiredService<OllamaChatService>(),
                 "google/gemma-3-27b-it:free" => _provider.GetRequiredService<OpenRouterChatService>(),
                 "google/gemini-2.0-flash-exp:free" => _provider.GetRequiredService<OpenRouterChatService>(),
-                "openai/gpt-3.5-turbo-0613" => _provider.GetRequiredService<OpenRouterChatService>(),
-                "google/gemini-2.0-flash-001" => _provider.GetRequiredService<OpenRouterChatService>(),
+                // "openai/gpt-3.5-turbo-0613" => _provider.GetRequiredService<OpenRouterChatService>(),
+                // "google/gemini-2.0-flash-001" => _provider.GetRequiredService<OpenRouterChatService>(),
+                "mistralai/devstral-2512:free" => _provider.GetRequiredService<OpenRouterChatService>(),
+                "deepseek/deepseek-r1-0528:free" => _provider.GetRequiredService<OpenRouterChatService>(),
                 "llama-3.1-8b-instant" => _provider.GetRequiredService<GroqChatService>(),
                 _ => throw new NotSupportedException($"Model '{modelName}' is not supported.")
             };

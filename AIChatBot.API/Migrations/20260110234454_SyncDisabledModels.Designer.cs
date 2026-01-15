@@ -4,6 +4,7 @@ using AIChatBot.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AIChatBot.API.Migrations
 {
     [DbContext(typeof(ChatBotDbContext))]
-    partial class ChatBotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260110234454_SyncDisabledModels")]
+    partial class SyncDisabledModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,6 +66,17 @@ namespace AIChatBot.API.Migrations
                     b.ToTable("AIModels");
 
                     b.HasData(
+                        new
+                        {
+                            Id = 5,
+                            Company = "DeepSeek",
+                            Description = "DeepSeek V3, a 685B-parameter, mixture-of-experts model, is the latest iteration of the flagship chat model family from the DeepSeek team.\nIt succeeds the DeepSeek V3 model and performs really well on a variety of tasks.",
+                            LogoUrl = "assets/images/model-icons/deepseek.png",
+                            ModelName = "deepseek/deepseek-chat-v3-0324:free",
+                            Name = "DeepSeek v3",
+                            ReferenceLink = "https://openrouter.ai/deepseek/deepseek-chat-v3-0324:free",
+                            ReferralSource = "OpenRouter"
+                        },
                         new
                         {
                             Id = 6,
@@ -135,6 +149,16 @@ namespace AIChatBot.API.Migrations
                     b.ToTable("AIModelChatModes");
 
                     b.HasData(
+                        new
+                        {
+                            AIModelId = 5,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 5,
+                            ChatModeId = 2
+                        },
                         new
                         {
                             AIModelId = 6,

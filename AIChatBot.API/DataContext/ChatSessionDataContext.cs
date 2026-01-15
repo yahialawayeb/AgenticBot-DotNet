@@ -43,5 +43,21 @@ namespace AIChatBot.API.DataContext
             await _dbContext.SaveChangesAsync();
             return session;
         }
+
+        public async Task<bool> DeleteSessionAsync(Guid userId, Guid sessionIdentity)
+        {
+            var session = await _dbContext.ChatSessions
+                .Include(s => s.Messages)
+                .FirstOrDefaultAsync(s => s.UserId == userId && s.UniqueIdentity == sessionIdentity);
+
+            if (session == null)
+                return false;
+
+            _dbContext.ChatMessages.RemoveRange(session.Messages);
+            _dbContext.ChatSessions.Remove(session);
+
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

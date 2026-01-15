@@ -66,14 +66,26 @@ namespace AIChatBot.API.AIServices
                 _httpClient.Timeout = TimeSpan.FromMinutes(5);
 
                 var response = await _httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
+                var responseBody = await response.Content.ReadAsStringAsync();
 
-                var stream = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError(
+                        "OpenRouter API request failed. Status: {StatusCode}, Model: {Model}, Response: {Response}",
+                        response.StatusCode,
+                        model,
+                        responseBody
+                    );
+                    throw new HttpRequestException(
+                        $"OpenRouter API returned {response.StatusCode}. Response: {responseBody}"
+                    );
+                }
+
                 if (!string.IsNullOrEmpty(connectionId))
                 {
                     await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveStatus", "🟡 Analyzing...");
                 }
-                return ConvertOpenRouterResponse(stream);
+                return ConvertOpenRouterResponse(responseBody);
             }
             catch (Exception ex)
             {
@@ -110,6 +122,19 @@ namespace AIChatBot.API.AIServices
 
                 var response = await _httpClient.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError(
+                        "OpenRouter API request failed (Function Support). Status: {StatusCode}, Model: {Model}, Response: {Response}",
+                        response.StatusCode,
+                        model,
+                        json
+                    );
+                    throw new HttpRequestException(
+                        $"OpenRouter API returned {response.StatusCode}. Response: {json}"
+                    );
+                }
 
                 if (!string.IsNullOrEmpty(connectionId))
                 {

@@ -4,6 +4,7 @@ using AIChatBot.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AIChatBot.API.Migrations
 {
     [DbContext(typeof(ChatBotDbContext))]
-    partial class ChatBotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260110231954_AddMistralDevstral")]
+    partial class AddMistralDevstral
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,6 +68,61 @@ namespace AIChatBot.API.Migrations
                     b.HasData(
                         new
                         {
+                            Id = 1,
+                            Company = "Microsoft",
+                            Description = "Phi-3 is a family of lightweight 3B (Mini) and 14B (Medium) state-of-the-art open models by Microsoft.",
+                            LogoUrl = "assets/images/model-icons/phi.png",
+                            ModelName = "phi3",
+                            Name = "Phi-3 Mini",
+                            ReferenceLink = "https://ollama.com/library/phi3:latest",
+                            ReferralSource = "Ollama"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Company = "Meta",
+                            Description = "Meta Llama 3: The most capable openly available LLM to date.",
+                            LogoUrl = "assets/images/model-icons/llama.png",
+                            ModelName = "llama3",
+                            Name = "LLaMA 3",
+                            ReferenceLink = "https://ollama.com/library/llama3:latest",
+                            ReferralSource = "Ollama"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Company = "Mistral AI",
+                            Description = "The 7B model released by Mistral AI, updated to version 0.3.",
+                            LogoUrl = "assets/images/model-icons/mistralai.png",
+                            ModelName = "mistral",
+                            Name = "Mistral 7B",
+                            ReferenceLink = "https://ollama.com/library/mistral:latest",
+                            ReferralSource = "Ollama"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Company = "Google",
+                            Description = "Gemma is a family of lightweight, state-of-the-art open models built by Google DeepMind. Updated to version 1.1.",
+                            LogoUrl = "assets/images/model-icons/gemma.png",
+                            ModelName = "gemma:2b",
+                            Name = "Gemma",
+                            ReferenceLink = "https://ollama.com/library/gemma:2b",
+                            ReferralSource = "Ollama"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Company = "DeepSeek",
+                            Description = "DeepSeek V3, a 685B-parameter, mixture-of-experts model, is the latest iteration of the flagship chat model family from the DeepSeek team.\nIt succeeds the DeepSeek V3 model and performs really well on a variety of tasks.",
+                            LogoUrl = "assets/images/model-icons/deepseek.png",
+                            ModelName = "deepseek/deepseek-chat-v3-0324:free",
+                            Name = "DeepSeek v3",
+                            ReferenceLink = "https://openrouter.ai/deepseek/deepseek-chat-v3-0324:free",
+                            ReferralSource = "OpenRouter"
+                        },
+                        new
+                        {
                             Id = 6,
                             Company = "Google",
                             Description = "Gemma 3 introduces multimodality, supporting vision-language input and text outputs. It handles context windows up to 128k tokens, understands over 140 languages, and offers improved math, reasoning, and chat capabilities, including structured outputs and function calling. Gemma 3 27B is Google's latest open source model, successor to Gemma 2.",
@@ -83,6 +141,28 @@ namespace AIChatBot.API.Migrations
                             ModelName = "google/gemini-2.0-flash-exp:free",
                             Name = "Gemini Flash 2.0 - Limited",
                             ReferenceLink = "https://openrouter.ai/google/gemini-2.0-flash-exp:free",
+                            ReferralSource = "OpenRouter"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Company = "OpenAI",
+                            Description = "GPT-3.5 Turbo is OpenAI's fastest model. It can understand and generate natural language or code, and is optimized for chat and traditional completion tasks.",
+                            LogoUrl = "assets/images/model-icons/chatgpt.png",
+                            ModelName = "openai/gpt-3.5-turbo-0613",
+                            Name = "GPT-3.5 Turbo",
+                            ReferenceLink = "https://openrouter.ai/openai/gpt-3.5-turbo-0613",
+                            ReferralSource = "OpenRouter"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Company = "Google",
+                            Description = "Gemini Flash 2.0 offers a significantly faster time to first token (TTFT) compared to Gemini Flash 1.5, while maintaining quality on par with larger models like Gemini Pro 1.5. It introduces notable enhancements in multimodal understanding, coding capabilities, complex instruction following, and function calling. These advancements come together to deliver more seamless and robust agentic experiences.",
+                            LogoUrl = "assets/images/model-icons/gemini.png",
+                            ModelName = "google/gemini-2.0-flash-001",
+                            Name = "Gemini Flash 2.0 - Unlimited",
+                            ReferenceLink = "https://openrouter.ai/google/gemini-2.0-flash-001",
                             ReferralSource = "OpenRouter"
                         },
                         new
@@ -106,17 +186,6 @@ namespace AIChatBot.API.Migrations
                             Name = "Mistral Devstral",
                             ReferenceLink = "https://openrouter.ai/mistralai/devstral-2512:free",
                             ReferralSource = "OpenRouter"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Company = "DeepSeek",
-                            Description = "DeepSeek R1 is a powerful and efficient model from DeepSeek, optimized for speed and high-quality responses, now available for free via OpenRouter.",
-                            LogoUrl = "assets/images/model-icons/deepseek.png",
-                            ModelName = "deepseek/deepseek-r1-0528:free",
-                            Name = "DeepSeek R1",
-                            ReferenceLink = "https://openrouter.ai/deepseek/deepseek-r1-0528:free",
-                            ReferralSource = "OpenRouter"
                         });
                 });
 
@@ -137,6 +206,56 @@ namespace AIChatBot.API.Migrations
                     b.HasData(
                         new
                         {
+                            AIModelId = 1,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 1,
+                            ChatModeId = 2
+                        },
+                        new
+                        {
+                            AIModelId = 2,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 2,
+                            ChatModeId = 2
+                        },
+                        new
+                        {
+                            AIModelId = 3,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 3,
+                            ChatModeId = 2
+                        },
+                        new
+                        {
+                            AIModelId = 4,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 4,
+                            ChatModeId = 2
+                        },
+                        new
+                        {
+                            AIModelId = 5,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 5,
+                            ChatModeId = 2
+                        },
+                        new
+                        {
                             AIModelId = 6,
                             ChatModeId = 1
                         },
@@ -157,6 +276,46 @@ namespace AIChatBot.API.Migrations
                         },
                         new
                         {
+                            AIModelId = 8,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 8,
+                            ChatModeId = 2
+                        },
+                        new
+                        {
+                            AIModelId = 8,
+                            ChatModeId = 3
+                        },
+                        new
+                        {
+                            AIModelId = 8,
+                            ChatModeId = 4
+                        },
+                        new
+                        {
+                            AIModelId = 9,
+                            ChatModeId = 1
+                        },
+                        new
+                        {
+                            AIModelId = 9,
+                            ChatModeId = 2
+                        },
+                        new
+                        {
+                            AIModelId = 9,
+                            ChatModeId = 3
+                        },
+                        new
+                        {
+                            AIModelId = 9,
+                            ChatModeId = 4
+                        },
+                        new
+                        {
                             AIModelId = 10,
                             ChatModeId = 1
                         },
@@ -174,21 +333,6 @@ namespace AIChatBot.API.Migrations
                         {
                             AIModelId = 11,
                             ChatModeId = 2
-                        },
-                        new
-                        {
-                            AIModelId = 12,
-                            ChatModeId = 1
-                        },
-                        new
-                        {
-                            AIModelId = 12,
-                            ChatModeId = 2
-                        },
-                        new
-                        {
-                            AIModelId = 12,
-                            ChatModeId = 5
                         });
                 });
 

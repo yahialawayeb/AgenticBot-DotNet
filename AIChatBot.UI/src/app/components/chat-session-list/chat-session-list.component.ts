@@ -14,6 +14,7 @@ export class ChatSessionListComponent {
     @Input() selectedSession?: ChatSession
     @Output() sessionSelected = new EventEmitter<ChatSession>();
     @Output() newChat = new EventEmitter<void>();
+    @Output() sessionDeleted = new EventEmitter<ChatSession>();
 
     onSessionClick(session: ChatSession) {
         this.sessionSelected.emit(session)
@@ -21,6 +22,13 @@ export class ChatSessionListComponent {
 
     onNewChatClick() {
         this.newChat.emit()
+    }
+
+    onDeleteClick(session: ChatSession, event: Event) {
+        event.stopPropagation();
+        if(confirm('Are you sure you want to delete this chat session?')) {
+            this.sessionDeleted.emit(session);
+        }
     }
 
     isSelected(session: ChatSession): boolean {

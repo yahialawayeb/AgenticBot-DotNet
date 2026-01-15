@@ -8,6 +8,7 @@ import { User } from '../../entities/user'
 import { AIModelChatMode } from '../../entities/aimodel-chatmode'
 import { ChatSession } from '../../entities/chatsession'
 import { Subscription } from 'rxjs/internal/Subscription'
+import { ChatSessionService } from '../../services/chat-session.service'
 
 @Component({
   selector: 'app-chat',
@@ -36,7 +37,7 @@ export class Chat implements OnInit, OnDestroy {
 
   private messageSub?: Subscription
 
-  constructor(private chatService: ChatService, private signalRService: SignalRService, private cdr: ChangeDetectorRef) { }
+  constructor(private chatService: ChatService, private chatSessionService: ChatSessionService, private signalRService: SignalRService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.chatService.getModels().subscribe({
@@ -192,6 +193,33 @@ export class Chat implements OnInit, OnDestroy {
       this.refreshUserSessions(session)
       this.onSessionSelected(session)
     }
+  }
+
+  onSessionDeleted(session: ChatSession) {
+    if (!this.userId) return;
+    this.chatSessionService.deleteSession(this.userId, session.uniqueIdentity).subscribe({
+      next: () => {
+        // Remove from list
+        this.userObj.chatSessions = this.userObj.chatSessions.filter(s => s.id !== session.id);
+        
+        // If current session is deleted, clear or select another
+        if (this.selectedSession && this.selectedSession.id === session.id) {
+          this.selectedSession = null;
+          this.chatSessionIdentity = undefined;
+          this.chatHistory = [];
+          
+          if (this.userObj.chatSessions.length > 0) {
+             this.onSessionSelected(this.userObj.chatSessions[0]);
+          } else {
+             this.showNewChatModal = true;
+          }
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        alert('Failed to delete session');
+      }
+    })
   }
 
   private refreshUserSessions(session: ChatSession) {

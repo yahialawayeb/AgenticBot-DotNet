@@ -14,7 +14,7 @@
             <div class="sessions-list" style="overflow-y: auto; overflow-x: hidden;">
                 <app-chat-session-list class="w-100" [sessions]="userObj.chatSessions"
                     [selectedSession]="selectedSession" (sessionSelected)="onSessionSelected($event)"
-                    (newChat)="onNewChat($event)"></app-chat-session-list>
+                    (newChat)="onNewChat($event)" (sessionDeleted)="onSessionDeleted($event)"></app-chat-session-list>
             </div>
         </div>
         }

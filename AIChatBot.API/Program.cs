@@ -11,7 +11,16 @@ using AIChatBot.API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models; // Ensure this directive is present for Swagger support  
 
+using DotNetEnv; // Import DotNetEnv
+
+// Load .env file
+Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Debug: Check if env var is loaded
+var dbConn = Environment.GetEnvironmentVariable("ConnectionStrings__ChatBotDb");
+Console.WriteLine($"[DEBUG] Raw Env Var 'ConnectionStrings__ChatBotDb': {dbConn}");
 
 // Add services to the container.
 
@@ -22,8 +31,11 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AIChatBot API", Version = "v1" });
 });
 
+var connectionString = builder.Configuration.GetConnectionString("ChatBotDb");
+Console.WriteLine($"[DEBUG] Configuration.GetConnectionString('ChatBotDb'): {connectionString}");
+
 builder.Services.AddDbContext<ChatBotDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ChatBotDb")));
+    options.UseSqlServer(connectionString));
 builder.Services.AddSingleton<RetryFileOperationService>();
 
 builder.Services.Configure<OpenRouterModelsApi>(builder.Configuration.GetSection("OpenRouterModelsApi"));

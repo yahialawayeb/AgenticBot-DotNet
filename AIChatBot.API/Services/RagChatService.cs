@@ -47,13 +47,23 @@ namespace AIChatBot.API.Services
 
         private string BuildContextualPrompt(string query, List<string> relevantChunks)
         {
+            const int MaxCharsPerChunk = 12000; // ~3,000 tokens per chunk (1 token ≈ 4 chars)
+            
             if (!relevantChunks.Any())
             {
                 return $"User query: {query}\n\nNo relevant documents found. Please provide a general response based on your knowledge.";
             }
 
-            var contextSection = string.Join("\n\n---\n\n", relevantChunks.Select((chunk, index) => 
-                $"Document {index + 1}:\n{chunk}"));
+            // Truncate each chunk to stay within token limits
+            var truncatedChunks = relevantChunks.Select((chunk, index) =>
+            {
+                var truncatedChunk = chunk.Length > MaxCharsPerChunk 
+                    ? chunk.Substring(0, MaxCharsPerChunk) + "... [truncated]"
+                    : chunk;
+                return $"Document {index + 1}:\n{truncatedChunk}";
+            });
+
+            var contextSection = string.Join("\n\n---\n\n", truncatedChunks);
 
             return $@"You are an AI assistant helping with queries based on provided context. Use the following context to answer the user's question accurately.
 

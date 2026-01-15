@@ -42,5 +42,13 @@ namespace AIChatBot.API.Controllers
                 return Ok(session);
             return BadRequest("Failed to create session.");
         }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSession([FromQuery] Guid userId, [FromQuery] Guid sessionIdentity)
+        {
+            var result = await _chatSessionService.DeleteSessionAsync(userId, sessionIdentity);
+            if (result)
+                return Ok();
+            return BadRequest("Failed to delete session.");
+        }
     }
 }

@@ -20,4 +20,8 @@ export class ChatSessionService {
     getSessions(userId: string): Observable<ChatSession[]> {
         return this.http.get<ChatSession[]>(`${this.apiUrl}/ChatSession/list?userId=${encodeURIComponent(userId)}`)
     }
+
+    deleteSession(userId: string, sessionIdentity: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/ChatSession?userId=${userId}&sessionIdentity=${sessionIdentity}`)
+    }
 }

@@ -4,6 +4,7 @@ using AIChatBot.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AIChatBot.API.Migrations
 {
     [DbContext(typeof(ChatBotDbContext))]
-    partial class ChatBotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260111103613_UpdateDeepSeekModelId")]
+    partial class UpdateDeepSeekModelId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,9 +116,9 @@ namespace AIChatBot.API.Migrations
                             Company = "DeepSeek",
                             Description = "DeepSeek R1 is a powerful and efficient model from DeepSeek, optimized for speed and high-quality responses, now available for free via OpenRouter.",
                             LogoUrl = "assets/images/model-icons/deepseek.png",
-                            ModelName = "deepseek/deepseek-r1-0528:free",
+                            ModelName = "deepseek/deepseek-r1:free",
                             Name = "DeepSeek R1",
-                            ReferenceLink = "https://openrouter.ai/deepseek/deepseek-r1-0528:free",
+                            ReferenceLink = "https://openrouter.ai/deepseek/deepseek-r1:free",
                             ReferralSource = "OpenRouter"
                         });
                 });
