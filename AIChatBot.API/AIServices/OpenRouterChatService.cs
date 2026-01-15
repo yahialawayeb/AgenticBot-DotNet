@@ -49,7 +49,7 @@ namespace AIChatBot.API.AIServices
                         new
                         {
                             role = "system",
-                            content = "You are a helpful assistant. Please respond in the language of the user."
+                            content = "You are a helpful assistant. You must ALWAYS respond in the same language as the user's last message, regardless of the language of the provided context."
                         },
                         new
                         {

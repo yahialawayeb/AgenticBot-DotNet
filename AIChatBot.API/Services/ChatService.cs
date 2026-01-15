@@ -185,7 +185,7 @@ namespace AIChatBot.API.Services
                     var fullMessage = request.Message;
                     if (!string.IsNullOrWhiteSpace(globalContext))
                     {
-                        fullMessage = $"Context:\n{globalContext}\n\nUser Message:\n{request.Message}";
+                        fullMessage = $"Context:\n{globalContext}\n\nUser Message:\n{request.Message}\n\nIMPORTANT: Answer in the same language as the User Message above.";
                     }
 
                     responseText = await service.SendMessageAsync(selectedModel.ModelName, fullMessage, request.ConnectionId);
