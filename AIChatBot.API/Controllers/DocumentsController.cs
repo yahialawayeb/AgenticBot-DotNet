@@ -82,7 +82,7 @@ namespace AIChatBot.API.Controllers
 
         private bool IsValidFileType(string fileName)
         {
-            var allowedExtensions = new[] { ".txt", ".md", ".pdf" };
+            var allowedExtensions = new[] { ".txt", ".md", ".pdf", ".docx", ".doc" };
             var extension = Path.GetExtension(fileName)?.ToLower();
             return allowedExtensions.Contains(extension);
         }
