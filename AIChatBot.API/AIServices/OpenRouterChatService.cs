@@ -48,6 +48,11 @@ namespace AIChatBot.API.AIServices
                     {
                         new
                         {
+                            role = "system",
+                            content = "You are a helpful assistant. Please respond in the language of the user."
+                        },
+                        new
+                        {
                             role = "user",
                             content = message
                         }

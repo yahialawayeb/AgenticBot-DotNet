@@ -179,7 +179,16 @@ namespace AIChatBot.API.Services
                 else
                 {
                     var service = _factory.GetService(selectedModel.ModelName);
-                    responseText = await service.SendMessageAsync(selectedModel.ModelName, request.Message, request.ConnectionId);
+                    
+                    // Inject Global Context
+                    var globalContext = await GetGlobalContextAsync();
+                    var fullMessage = request.Message;
+                    if (!string.IsNullOrWhiteSpace(globalContext))
+                    {
+                        fullMessage = $"Context:\n{globalContext}\n\nUser Message:\n{request.Message}";
+                    }
+
+                    responseText = await service.SendMessageAsync(selectedModel.ModelName, fullMessage, request.ConnectionId);
                 }
             }
             catch (Exception ex)
@@ -275,6 +284,36 @@ namespace AIChatBot.API.Services
             }
 
             return msgObject;
+        }
+
+        private static string? _cachedGlobalContext;
+        private static DateTime _lastCacheUpdate = DateTime.MinValue;
+        private readonly TimeSpan _cacheDuration = TimeSpan.FromMinutes(10); // Refresh every 10 mins if needed, or keep static.
+
+        private async Task<string> GetGlobalContextAsync()
+        {
+            // Simple caching strategy
+            if (_cachedGlobalContext != null && (DateTime.UtcNow - _lastCacheUpdate) < _cacheDuration)
+            {
+                return _cachedGlobalContext;
+            }
+
+            try
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "KnowledgeFiles", "extracted_text.txt");
+                if (System.IO.File.Exists(filePath))
+                {
+                    _cachedGlobalContext = await System.IO.File.ReadAllTextAsync(filePath);
+                    _lastCacheUpdate = DateTime.UtcNow;
+                    return _cachedGlobalContext;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading global context file: {ex.Message}");
+            }
+            
+            return string.Empty;
         }
     }
 }
